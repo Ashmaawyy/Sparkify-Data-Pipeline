@@ -1,6 +1,7 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from airflow import DAG
 
 class DataQualityOperator(BaseOperator):
 
@@ -11,6 +12,8 @@ class DataQualityOperator(BaseOperator):
                  # Define your operators params (with defaults) here
                  # Example:
                  # conn_id = your-connection-name
+                 task_id = "task_id",
+                 dag = DAG,
                  *args, **kwargs):
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
