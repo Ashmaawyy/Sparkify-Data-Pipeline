@@ -68,13 +68,13 @@ run_data_quality_checks = DataQualityOperator(
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 #                                                                                            
-#                                                                                              ======> load_songs_dimention_table ===========> 
-#                      ======> satge_events_to_redshift                                        ======> load_users_dimention_table ============>
-#                   ||                                 \\                                  ||                                                     \\
-#   start_operator                                        =====> load_songplays_fact_table                                                           ========> run_data_quality_checks ===========> end_operator
-#                   \\                                 ||                                  \\                                                     ||
-#                      ======> stage_songs_to_redshift                                         =======> load_artists_dimention_table =========>
-#                                                                                              =======> load_time_dimention_table ===========>
+#                                                                                              =======> load_songs_dimention_table 
+#                      ======> satge_events_to_redshift                                        =======> load_users_dimention_table
+#                   ||                                 \\                                  ||                                        \\
+#   start_operator                                        =====> load_songplays_fact_table                                              ======> run_data_quality_checks ======> end_operator
+#                   \\                                 ||                                  \\                                        ||
+#                      ======> stage_songs_to_redshift                                         ======> load_artists_dimention_table
+#                                                                                              ======> load_time_dimention_table
 #
 
 # First stage in DAG
