@@ -2,7 +2,7 @@ from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow import DAG
 
-class LoadFactOperator(BaseOperator):
+class LoadFactsOperator(BaseOperator):
 
     ui_color = '#F98866'
 
@@ -14,7 +14,7 @@ class LoadFactOperator(BaseOperator):
                  dag = DAG,
                  *args, **kwargs):
 
-        super(LoadFactOperator, self).__init__(*args, **kwargs)
+        super(LoadFactsOperator, self).__init__(*args, **kwargs)
         # Map params here
         # Example:
         # self.conn_id = conn_id

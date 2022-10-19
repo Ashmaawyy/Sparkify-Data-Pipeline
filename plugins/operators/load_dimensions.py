@@ -3,7 +3,7 @@ from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow import DAG
 
-class LoadDimensionOperator(BaseOperator):
+class LoadDimensionsOperator(BaseOperator):
 
     ui_color = '#80BD9E'
 
@@ -16,7 +16,7 @@ class LoadDimensionOperator(BaseOperator):
                  dag = DAG,
                  *args, **kwargs):
 
-        super(LoadDimensionOperator, self).__init__(*args, **kwargs)
+        super(LoadDimensionsOperator, self).__init__(*args, **kwargs)
         # Map params here
         # Example:
         # self.conn_id = conn_id

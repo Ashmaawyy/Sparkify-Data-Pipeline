@@ -4,8 +4,8 @@ from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators import \
     StageToRedshiftOperator, \
-    LoadFactOperator, \
-    LoadDimensionOperator, \
+    LoadFactsOperator, \
+    LoadDimensionsOperator, \
     DataQualityOperator
 from plugins.helpers import SqlQueries
 
@@ -35,27 +35,27 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     dag=dag
 )
 
-load_songplays_fact_table = LoadFactOperator(
+load_songplays_fact_table = LoadFactsOperator(
     task_id='Load_songplays_fact_table',
     dag=dag
 )
 
-load_users_dimension_table = LoadDimensionOperator(
+load_users_dimension_table = LoadDimensionsOperator(
     task_id='Load_user_dim_table',
     dag=dag
 )
 
-load_songs_dimension_table = LoadDimensionOperator(
+load_songs_dimension_table = LoadDimensionsOperator(
     task_id='Load_song_dim_table',
     dag=dag
 )
 
-load_artists_dimension_table = LoadDimensionOperator(
+load_artists_dimension_table = LoadDimensionsOperator(
     task_id='Load_artist_dim_table',
     dag=dag
 )
 
-load_time_dimension_table = LoadDimensionOperator(
+load_time_dimension_table = LoadDimensionsOperator(
     task_id='Load_time_dim_table',
     dag=dag
 )
