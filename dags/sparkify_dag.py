@@ -67,7 +67,7 @@ run_data_quality_checks = DataQualityOperator(
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
-#                                                                                            
+#                     Stage #1                           Stage #2                           Stage #3                                    Stage #4                        Stage #5
 #                                                                                              =======> load_songs_dimention_table 
 #                      ======> satge_events_to_redshift                                        =======> load_users_dimention_table
 #                   ||                                 \\                                  ||                                        \\
