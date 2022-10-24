@@ -1,6 +1,7 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.contrib.hooks.aws_hook import AwsHook
 from airflow.models import BaseOperator
+from psycopg2 import Error
 
 class StageToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
@@ -44,41 +45,45 @@ class StageToRedshiftOperator(BaseOperator):
         credentials = aws_hook.get_credentials()
 
         self.log.info('Creating staging Redshift tables if they do not exist')
-        redshift.run('''
-                CREATE TABLE IF NOT EXISTS public.staging_events (
-                artist varchar(256),
-                auth varchar(256),
-                firstname varchar(256),
-                gender varchar(256),
-                iteminsession int4,
-                lastname varchar(256),
-                length numeric(18,0),
-                "level" varchar(256),
-                location varchar(256),
-                "method" varchar(256),
-                page varchar(256),
-                registration numeric(18,0),
-                sessionid int4,
-                song varchar(256),
-                status int4,
-                ts int8,
-                useragent varchar(256),
-                userid int4);
-                ''')
-        redshift.run('''
-        CREATE TABLE IF NOT EXISTS public.staging_songs (
-        num_songs int4,
-        artist_id varchar(256),
-        artist_name varchar(256),
-        artist_latitude numeric(18,0),
-        artist_longitude numeric(18,0),
-        artist_location varchar(256),
-        song_id varchar(256),
-        title varchar(256),
-        duration numeric(18,0),
-        "year" int4);
-        ''')
-        self.log.info('Staging tables created successfully :)')
+        try:
+            redshift.run('''
+            CREATE TABLE IF NOT EXISTS public.staging_events (
+            artist varchar(256),
+            auth varchar(256),
+            firstName varchar(256),
+            gender varchar(256),
+            itemInSession int4,
+            lastName varchar(256),
+            length numeric(18,0),
+            "level" varchar(256),
+            location varchar(256),
+            "method" varchar(256),
+            page varchar(256),
+            registration numeric(18,0),
+            sessionId int4,
+            song varchar(256),
+            status int4,
+            ts int8,
+            userAgent varchar(256),
+            useriI int4);
+            ''')
+            redshift.run('''
+            CREATE TABLE IF NOT EXISTS public.staging_songs (
+            num_songs int4,
+            artist_id varchar(256),
+            artist_name varchar(256),
+            artist_latitude numeric(18,0),
+            artist_longitude numeric(18,0),
+            artist_location varchar(256),
+            song_id varchar(256),
+            title varchar(256),
+            duration numeric(18,0),
+            "year" int4);
+            ''')
+            self.log.info('Staging tables created successfully :)')
+
+        except Error as e:
+            self.log.info(e)
 
         self.log.info('Copying data from S3 bucket {} to Redshift table {}'.format(self.s3_bucket, self.table))
         rendered_key = self.s3_key.format(**context)
@@ -91,4 +96,9 @@ class StageToRedshiftOperator(BaseOperator):
             self.ignore_headers,
             self.delimiter
         )
-        redshift.run(formatted_copy_sql)
+        try:
+            redshift.run(formatted_copy_sql)
+            self.log.info('Data copied to {} susseccfully :)'.format(self.table))
+
+        except Error as e:
+            self.log.info(e)
