@@ -14,12 +14,12 @@ default_args = {
 }
 
 dag = DAG('sparkify_dag',
-          default_args=default_args,
-          description='Load and transform data in Redshift with Airflow',
-          schedule_interval='@yearly'
+          default_args = default_args,
+          description = 'Load and transform data in Redshift with Airflow',
+          schedule_interval = '@yearly'
         )
 
-start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
+start_operator = DummyOperator(task_id = 'Begin_execution',  dag = dag)
 
 staging_events_create_sql = '''
 CREATE TABLE IF NOT EXISTS public.stage_events (
@@ -149,8 +149,8 @@ load_songplays_fact_table = LoadFactsOperator(
 )
 
 load_users_dimension_table = LoadDimensionsOperator(
-    task_id='load_user_dim_table',
-    dag=dag,
+    task_id = 'load_user_dim_table',
+    dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
@@ -160,8 +160,8 @@ load_users_dimension_table = LoadDimensionsOperator(
 )
 
 load_songs_dimension_table = LoadDimensionsOperator(
-    task_id='load_song_dim_table',
-    dag=dag,
+    task_id = 'load_song_dim_table',
+    dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
@@ -171,8 +171,8 @@ load_songs_dimension_table = LoadDimensionsOperator(
 )
 
 load_artists_dimension_table = LoadDimensionsOperator(
-    task_id='load_artist_dim_table',
-    dag=dag,
+    task_id = 'load_artist_dim_table',
+    dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
@@ -182,8 +182,8 @@ load_artists_dimension_table = LoadDimensionsOperator(
 )
 
 load_time_dimension_table = LoadDimensionsOperator(
-    task_id='load_time_dim_table',
-    dag=dag,
+    task_id = 'load_time_dim_table',
+    dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
@@ -193,8 +193,8 @@ load_time_dimension_table = LoadDimensionsOperator(
 )
 
 run_data_quality_checks = DataQualityOperator(
-    task_id='run_data_quality_checks',
-    dag=dag,
+    task_id = 'run_data_quality_checks',
+    dag = dag,
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
