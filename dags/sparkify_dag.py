@@ -197,7 +197,7 @@ run_data_quality_checks = DataQualityOperator(
     dag = dag,
 )
 
-end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
+end_operator = DummyOperator(task_id = 'Stop_execution',  dag = dag)
 
 #
 #                     Stage #1                           Stage #2                           Stage #3                                    Stage #4                        Stage #5
