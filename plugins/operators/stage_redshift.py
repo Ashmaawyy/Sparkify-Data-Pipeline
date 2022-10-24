@@ -27,7 +27,7 @@ class StageToRedshiftOperator(BaseOperator):
                  ignore_headers = '1',
                  *args, **kwargs):
 
-        super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Map params here
         self.redshift_conn_id = redshift_conn_id
         self.aws_credentials_id = aws_credentials_id
