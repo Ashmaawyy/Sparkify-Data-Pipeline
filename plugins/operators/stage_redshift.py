@@ -46,8 +46,12 @@ class StageToRedshiftOperator(BaseOperator):
 
         self.log.info('Creating staging Redshift tables if they do not exist')
         try:
+            redshift.run('DROP TABLE staging_events')
+            redshift.run('DROP TABLE staging_songs')
+            self.log.info('Staging tables dropped successfully :)')
+
             redshift.run('''
-            CREATE TABLE IF NOT EXISTS public.staging_events (
+            CREATE TABLE public.staging_events (
             artist varchar(256),
             auth varchar(256),
             firstName varchar(256),
@@ -63,12 +67,12 @@ class StageToRedshiftOperator(BaseOperator):
             sessionId int4,
             song varchar(256),
             status int4,
-            ts int8,
+            ts int16,
             userAgent varchar(256),
-            useriI int4);
+            useriId int4);
             ''')
             redshift.run('''
-            CREATE TABLE IF NOT EXISTS public.staging_songs (
+            CREATE TABLE public.staging_songs (
             num_songs int4,
             artist_id varchar(256),
             artist_name varchar(256),
