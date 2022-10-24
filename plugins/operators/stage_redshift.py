@@ -22,6 +22,7 @@ class StageToRedshiftOperator(BaseOperator):
                  aws_credentials_id = '',
                  region = '',
                  table = '',
+                 schema = '',
                  s3_bucket = '',
                  s3_key = '',
                  delimiter = ',',
@@ -37,55 +38,18 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_key = s3_key
         self.delimiter = delimiter
         self.table = table
+        self.schema = schema
         self.ignore_headers = ignore_headers
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
-        
-        staging_events_create_statement = '''
-        CREATE TABLE IF NOT EXISTS public.stage_events (
-            artist varchar(256),
-            auth varchar(256),
-            firstName varchar(256),
-            gender varchar(256),
-            itemInSession int4,
-            lastName varchar(256),
-            length numeric(18,0),
-            level varchar(256),
-            location varchar(256),
-            method varchar(256),
-            page varchar(256),
-            registration numeric(18,0),
-            sessionId int4,
-            song varchar(256),
-            status int4,
-            ts int8,
-            userAgent varchar(256),
-            userId int4);
-        '''
-        staging_songs_create_statement = '''
-        CREATE TABLE IF NOT EXISTS public.staging_songs (
-            num_songs int4,
-            artist_id varchar(256),
-            artist_name varchar(256),
-            artist_latitude numeric(18,0),
-            artist_longitude numeric(18,0),
-            artist_location varchar(256),
-            song_id varchar(256),
-            title varchar(256),
-            duration numeric(18,0),
-            "year" int4);
-        '''
 
         try:
-            self.log.info('Creating staging_events table...')
-            redshift.run(staging_events_create_statement)
-            self.log.info('staging_events table created successfully :)')
-            self.log.info('Creating staging_songs table...')
-            redshift.run(staging_songs_create_statement)
-            self.log.info('staging_songs table created successfully :)')
+            self.log.info('Creating {} table...'.format(self.table))
+            redshift.run(self.create_sql)
+            self.log.info('{} table created successfully :)'.format(self.table))
 
         except Error as e:
             self.log.info(e)
