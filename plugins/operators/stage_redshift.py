@@ -10,6 +10,7 @@ class StageToRedshiftOperator(BaseOperator):
         FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
+        REGION 'us-west-2'
         IGNOREHEADER {}
         DELIMITER '{}'
     """
