@@ -11,17 +11,16 @@ class StageToRedshiftOperator(BaseOperator):
         FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
-        REGION 'us-west-2'
+        REGION '{}'
         IGNOREHEADER {}
         DELIMITER '{}'
     """
 
     def __init__(self,
                  # Operators params (with defaults) here
-                 # Example:
-                 # redshift_conn_id=your-connection-name
                  redshift_conn_id = '',
                  aws_credentials_id = '',
+                 region = '',
                  table = '',
                  s3_bucket = '',
                  s3_key = '',
@@ -33,6 +32,7 @@ class StageToRedshiftOperator(BaseOperator):
         # Map params here
         self.redshift_conn_id = redshift_conn_id
         self.aws_credentials_id = aws_credentials_id
+        self.region = region
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.delimiter = delimiter
@@ -43,11 +43,9 @@ class StageToRedshiftOperator(BaseOperator):
         redshift = PostgresHook(self.redshift_conn_id)
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
-
-        self.log.info('Creating staging Redshift tables if they do not exist')
-        try:
-            redshift.run('''
-            CREATE TABLE public.staging_events (
+        
+        staging_events_create_statement = '''
+        CREATE TABLE IF NOT EXISTS public.stage_events (
             artist varchar(256),
             auth varchar(256),
             firstName varchar(256),
@@ -66,9 +64,9 @@ class StageToRedshiftOperator(BaseOperator):
             ts int8,
             userAgent varchar(256),
             userId int4);
-            ''')
-            redshift.run('''
-            CREATE TABLE public.staging_songs (
+        '''
+        staging_songs_create_statement = '''
+        CREATE TABLE IF NOT EXISTS public.staging_songs (
             num_songs int4,
             artist_id varchar(256),
             artist_name varchar(256),
@@ -79,8 +77,15 @@ class StageToRedshiftOperator(BaseOperator):
             title varchar(256),
             duration numeric(18,0),
             "year" int4);
-            ''')
-            self.log.info('Staging tables created successfully :)')
+        '''
+
+        try:
+            self.log.info('Creating staging_events table...')
+            redshift.run(staging_events_create_statement)
+            self.log.info('staging_events table created successfully :)')
+            self.log.info('Creating staging_songs table...')
+            redshift.run(staging_songs_create_statement)
+            self.log.info('staging_songs table created successfully :)')
 
         except Error as e:
             self.log.info(e)
@@ -93,6 +98,7 @@ class StageToRedshiftOperator(BaseOperator):
             s3_path,
             credentials.access_key,
             credentials.secret_key,
+            self.region,
             self.ignore_headers,
             self.delimiter
         )
