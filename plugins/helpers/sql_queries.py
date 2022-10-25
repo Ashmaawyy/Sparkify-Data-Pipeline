@@ -40,3 +40,9 @@ class SqlQueries:
                extract(month from start_time), extract(year from start_time), extract(dayofweek from start_time)
         FROM songplays
     """)
+   
+    userId_data_quality_check = ("""
+    SELECT COUNT (*)
+    FROM staged_events
+    WHERE userId IS NULL
+    """)

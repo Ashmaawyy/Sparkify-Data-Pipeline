@@ -155,7 +155,7 @@ load_songplays_fact_table = LoadFactsOperator(
 )
 
 load_users_dimension_table = LoadDimensionsOperator(
-    task_id = 'load_user_dim_table',
+    task_id = 'load_users_dim_table',
     dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
@@ -166,7 +166,7 @@ load_users_dimension_table = LoadDimensionsOperator(
 )
 
 load_songs_dimension_table = LoadDimensionsOperator(
-    task_id = 'load_song_dim_table',
+    task_id = 'load_songs_dim_table',
     dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
@@ -177,7 +177,7 @@ load_songs_dimension_table = LoadDimensionsOperator(
 )
 
 load_artists_dimension_table = LoadDimensionsOperator(
-    task_id = 'load_artist_dim_table',
+    task_id = 'load_artists_dim_table',
     dag = dag,
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
@@ -198,9 +198,14 @@ load_time_dimension_table = LoadDimensionsOperator(
     load_sql = SqlQueries.time_table_insert
 )
 
-run_data_quality_checks = DataQualityOperator(
-    task_id = 'run_data_quality_checks',
+userId_data_quality_check = DataQualityOperator(
+    task_id = 'userId_data_quality_check',
     dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    test_count_query = SqlQueries.userId_data_quality_check,
+    expected_result = '0'
 )
 
 end_operator = DummyOperator(task_id = 'Stop_execution',  dag = dag)
@@ -211,7 +216,7 @@ end_operator = DummyOperator(task_id = 'Stop_execution',  dag = dag)
 #                                                                                              =======> load_songs_dimention_table 
 #                      ======> satge_events_to_redshift                                        =======> load_users_dimention_table
 #                   ||                                 \\                                  ||                                        \\
-#   start_operator                                        =====> load_songplays_fact_table                                              ======> run_data_quality_checks ======> end_operator
+#   start_operator                                        =====> load_songplays_fact_table                                              ======> userId_data_quality_check ======> end_operator
 #                   \\                                 ||                                  \\                                        ||
 #                      ======> stage_songs_to_redshift                                         ======> load_artists_dimention_table
 #                                                                                              ======> load_time_dimention_table
@@ -232,10 +237,10 @@ load_songplays_fact_table >> load_artists_dimension_table
 load_songplays_fact_table >> load_time_dimension_table
 
 # Fourth stage in DAG
-load_songs_dimension_table >> run_data_quality_checks
-load_users_dimension_table >> run_data_quality_checks
-load_artists_dimension_table >> run_data_quality_checks
-load_time_dimension_table >> run_data_quality_checks
+load_songs_dimension_table >> userId_data_quality_check
+load_users_dimension_table >> userId_data_quality_check
+load_artists_dimension_table >> userId_data_quality_check
+load_time_dimension_table >> userId_data_quality_check
 
 # Fifth (and final) stage in DAG
-run_data_quality_checks >> end_operator
+userId_data_quality_check >> end_operator

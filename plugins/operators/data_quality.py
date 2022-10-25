@@ -11,7 +11,7 @@ class DataQualityOperator(BaseOperator):
                  aws_credentials_id = '',
                  region = '',
                  test_count_query = '',
-                 expected_result = 0,
+                 expected_result = '0',
                  *args, **kwargs):
 
         super().__init__(*args, **kwargs)
@@ -31,6 +31,7 @@ class DataQualityOperator(BaseOperator):
                 self.log.info('Data qauality checks completed successfully :)')
                 self.log.info('test query result = {}\nexpected result = {}'.format(query_result, self.expected_result))
             else:
-                self.log.error('Data quality check failed expected result = {}\nreturned result = {}'.format(query_result, self.expected_result))
+                self.log.error('Data quality check failed\nexpected result = {}\nreturned result = {}' \
+                    .format(query_result, self.expected_result))
         except Error as e:
             self.log.error(e)
