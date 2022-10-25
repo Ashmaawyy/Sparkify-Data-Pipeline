@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS public.staged_events (
     auth varchar(256),
     firstName varchar(256),
     gender varchar(256),
-    itemInSession int4,
+    itemInSession numeric(18,0),
     lastName varchar(256),
     length numeric(18,0),
     level varchar(256),
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS public.staged_events (
     status int4,
     ts int8,
     userAgent varchar(256),
-    userId int4
+    userId varchar(256)
     );
 '''
 staging_songs_create_sql = '''
@@ -122,7 +122,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
     table = 'staged_events',
     schema = staging_events_create_sql,
     s3_bucket = 'udacity-dend',
-    s3_key = 'log_data'
+    s3_key = 'log_data/2018/11'
 )
 
 stage_songs_to_redshift = StageToRedshiftOperator(
@@ -134,7 +134,7 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     table = 'staged_songs',
     schema = staging_songs_create_sql,
     s3_bucket = 'udacity-dend',
-    s3_key = 'song_data'
+    s3_key = 'song_data/A/B/C'
 )
 
 load_songplays_fact_table = LoadFactsOperator(
