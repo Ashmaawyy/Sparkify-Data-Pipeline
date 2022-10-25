@@ -205,7 +205,7 @@ userId_data_quality_check = DataQualityOperator(
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
     test_count_query = SqlQueries.userId_data_quality_check,
-    expected_result = '0'
+    expected_result = 0
 )
 
 end_operator = DummyOperator(task_id = 'Stop_execution',  dag = dag)

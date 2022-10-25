@@ -11,7 +11,7 @@ class DataQualityOperator(BaseOperator):
                  aws_credentials_id = '',
                  region = '',
                  test_count_query = '',
-                 expected_result = '0',
+                 expected_result = 0,
                  *args, **kwargs):
 
         super().__init__(*args, **kwargs)
