@@ -12,8 +12,6 @@ class StageToRedshiftOperator(BaseOperator):
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
         REGION '{}'
-        IGNOREHEADER {}
-        DELIMITER '{}'
         JSON 'auto'
     """
 
@@ -26,8 +24,6 @@ class StageToRedshiftOperator(BaseOperator):
                  schema = '',
                  s3_bucket = '',
                  s3_key = '',
-                 delimiter = ',',
-                 ignore_headers = '1',
                  *args, **kwargs):
 
         super().__init__(*args, **kwargs)
@@ -37,10 +33,8 @@ class StageToRedshiftOperator(BaseOperator):
         self.region = region
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
-        self.delimiter = delimiter
         self.table = table
         self.schema = schema
-        self.ignore_headers = ignore_headers
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
@@ -64,8 +58,6 @@ class StageToRedshiftOperator(BaseOperator):
             credentials.access_key,
             credentials.secret_key,
             self.region,
-            self.ignore_headers,
-            self.delimiter
         )
         try:
             redshift.run(formatted_copy_sql)
