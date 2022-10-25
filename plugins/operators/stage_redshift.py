@@ -48,7 +48,7 @@ class StageToRedshiftOperator(BaseOperator):
 
         try:
             self.log.info('Creating {} table...'.format(self.table))
-            redshift.run(self.create_sql)
+            redshift.run(self.schema)
             self.log.info('{} table created successfully :)'.format(self.table))
 
         except Error as e:
