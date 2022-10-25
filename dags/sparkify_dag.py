@@ -122,7 +122,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
     table = 'staged_events',
     schema = staging_events_create_sql,
     s3_bucket = 'udacity-dend',
-    s3_key = 'log_data/2018/11'
+    s3_key = 'log_data'
 )
 
 stage_songs_to_redshift = StageToRedshiftOperator(
@@ -134,7 +134,7 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     table = 'staged_songs',
     schema = staging_songs_create_sql,
     s3_bucket = 'udacity-dend',
-    s3_key = 'song_data/A/B/C'
+    s3_key = 'song_data'
 )
 
 load_songplays_fact_table = LoadFactsOperator(
