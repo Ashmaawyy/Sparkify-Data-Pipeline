@@ -11,6 +11,7 @@ from plugins.helpers.sql_queries import SqlQueries
 default_args = {
     'owner': 'ashmawy',
     'start_date': datetime(2019, 1, 12),
+    'retries': 3
 }
 
 dag = DAG('sparkify_dag',
