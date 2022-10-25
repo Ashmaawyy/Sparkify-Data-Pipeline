@@ -11,8 +11,7 @@ class DataQualityOperator(BaseOperator):
                  aws_credentials_id = '',
                  region = '',
                  table = '',
-                 create_sql = '',
-                 load_sql = '',
+                 query = '',
                  *args, **kwargs):
 
         super().__init__(*args, **kwargs)
@@ -21,8 +20,13 @@ class DataQualityOperator(BaseOperator):
         self.aws_credentials_id = aws_credentials_id
         self.region = region
         self.table = table
-        self.create_sql = create_sql
-        self.load_sql = load_sql
+        self.query = query
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
+        try:
+            self.log.info('Executing data quality queries...')
+            redshift.run(self.query)
+            self.log.info('Data qauality checks completed successfully :)')
+        except Error as e:
+            self.log.info(e)
