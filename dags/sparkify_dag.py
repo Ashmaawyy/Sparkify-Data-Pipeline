@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS public.songs (
     );
 '''
 artists_table_create_sql = '''
-CREATE TABLE IF NOT EXIISTS public.artists (
+CREATE TABLE IF NOT EXISTS public.artists (
 	artistid varchar(256) NOT NULL,
 	name varchar(256),
 	location varchar(256),
