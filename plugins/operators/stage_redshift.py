@@ -64,4 +64,4 @@ class StageToRedshiftOperator(BaseOperator):
             self.log.info('Data copied to {} susseccfully :)'.format(self.table))
 
         except Error as e:
-            self.log.info(e)
+            self.log.error(e)

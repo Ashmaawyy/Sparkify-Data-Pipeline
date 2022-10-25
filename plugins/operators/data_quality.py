@@ -10,8 +10,8 @@ class DataQualityOperator(BaseOperator):
                  redshift_conn_id = '',
                  aws_credentials_id = '',
                  region = '',
-                 table = '',
-                 query = '',
+                 test_count_query = '',
+                 expected_result = 0,
                  *args, **kwargs):
 
         super().__init__(*args, **kwargs)
@@ -19,14 +19,18 @@ class DataQualityOperator(BaseOperator):
         self.redshift_conn_id = redshift_conn_id
         self.aws_credentials_id = aws_credentials_id
         self.region = region
-        self.table = table
-        self.query = query
+        self.test_count_query = test_count_query
+        self.expected_result = expected_result
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
         try:
-            self.log.info('Executing data quality queries...')
-            redshift.run(self.query)
-            self.log.info('Data qauality checks completed successfully :)')
+            self.log.info('Executing data quality query...')
+            query_result = redshift.run(self.test_count_query)
+            if query_result == self.expected_result:
+                self.log.info('Data qauality checks completed successfully :)')
+                self.log.info('test query result = {}\nexpected result = {}'.format(query_result, self.expected_result))
+            else:
+                self.log.error('Data quality check failed expected result = {}\nreturned result = {}'.format(query_result, self.expected_result))
         except Error as e:
-            self.log.info(e)
+            self.log.error(e)

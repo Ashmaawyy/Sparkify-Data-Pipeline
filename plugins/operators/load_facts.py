@@ -35,4 +35,4 @@ class LoadFactsOperator(BaseOperator):
             redshift.run(self.load_sql)
             self.log.info('Loaded {} fact table successfully :)'.format(self.table))
         except Error as e:
-            self.log.info(e)
+            self.log.error(e)

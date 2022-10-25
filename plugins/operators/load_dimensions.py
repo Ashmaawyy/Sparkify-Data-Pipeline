@@ -39,4 +39,4 @@ class LoadDimensionsOperator(BaseOperator):
             self.log.info('Loaded {} dimention table successfully :)'.format(self.table))
 
         except Error as e:
-            self.log.info(e)
+            self.log.error(e)
