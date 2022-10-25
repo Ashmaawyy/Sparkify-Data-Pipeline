@@ -14,6 +14,7 @@ class StageToRedshiftOperator(BaseOperator):
         REGION '{}'
         IGNOREHEADER {}
         DELIMITER '{}'
+        JSON 'auto'
     """
 
     def __init__(self,
