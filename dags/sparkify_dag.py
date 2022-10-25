@@ -22,7 +22,7 @@ dag = DAG('sparkify_dag',
 start_operator = DummyOperator(task_id = 'Begin_execution',  dag = dag)
 
 staging_events_create_sql = '''
-CREATE TABLE IF NOT EXISTS public.stage_events (
+CREATE TABLE IF NOT EXISTS public.staged_events (
     artist varchar(256),
     auth varchar(256),
     firstName varchar(256),
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS public.stage_events (
     );
 '''
 staging_songs_create_sql = '''
-CREATE TABLE IF NOT EXISTS public.staging_songs (
+CREATE TABLE IF NOT EXISTS public.staged_songs (
     num_songs int4,
     artist_id varchar(256),
     artist_name varchar(256),
@@ -119,7 +119,7 @@ stage_events_to_redshift = StageToRedshiftOperator(
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
-    table = 'staging_events',
+    table = 'staged_events',
     schema = staging_events_create_sql,
     s3_bucket = 'udacity-dend',
     s3_key = 'log_data'
@@ -131,7 +131,7 @@ stage_songs_to_redshift = StageToRedshiftOperator(
     redshift_conn_id = 'redshift',
     aws_credentials_id = 'aws_credentials',
     region = 'us-west-2',
-    table = 'staging_songs',
+    table = 'staged_songs',
     schema = staging_songs_create_sql,
     s3_bucket = 'udacity-dend',
     s3_key = 'song_data'
