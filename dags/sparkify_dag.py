@@ -15,14 +15,14 @@ default_args = {
     'retry_delay': timedelta(minutes = 5),
     'depends_on_past': False,
     'email_on_retry': False,
-    'email_on_failure': False
+    'email_on_failure': False,
+    'catchup': True
 }
 
 dag = DAG('sparkify_dag',
           default_args = default_args,
           description = 'Load and transform data in Redshift with Airflow',
-          schedule_interval = '@hourly',
-          catchup = True
+          schedule_interval = '@hourly'
         )
 
 start_operator = DummyOperator(task_id = 'Begin_execution',  dag = dag)
