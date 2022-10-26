@@ -11,7 +11,6 @@ class LoadFactsOperator(BaseOperator):
                  aws_credentials_id = '',
                  region = '',
                  table = '',
-                 create_sql = '',
                  load_sql = '',
                  *args, **kwargs):
 
@@ -21,16 +20,12 @@ class LoadFactsOperator(BaseOperator):
         self.aws_credentials_id = aws_credentials_id
         self.region = region
         self.table = table
-        self.create_sql = create_sql
         self.load_sql = load_sql
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
 
         try:
-            self.log.info('Creating {} fact table...'.format(self.table))
-            redshift.run(self.create_sql)
-            self.log.info('Created {} fact table successfully :)'.format(self.table))
             self.log.info('Loading {} fact table...'.format(self.table))
             redshift.run(self.load_sql)
             self.log.info('Loaded {} fact table successfully :)'.format(self.table))

@@ -21,7 +21,6 @@ class StageToRedshiftOperator(BaseOperator):
                  aws_credentials_id = '',
                  region = '',
                  table = '',
-                 schema = '',
                  s3_bucket = '',
                  s3_key = '',
                  *args, **kwargs):
@@ -34,20 +33,11 @@ class StageToRedshiftOperator(BaseOperator):
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.table = table
-        self.schema = schema
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
-
-        try:
-            self.log.info('Creating {} table...'.format(self.table))
-            redshift.run(self.schema)
-            self.log.info('{} table created successfully :)'.format(self.table))
-
-        except Error as e:
-            self.log.info(e)
 
         self.log.info('Copying data from S3 bucket {} to Redshift table {}'.format(self.s3_bucket, self.table))
         rendered_key = self.s3_key.format(**context)
