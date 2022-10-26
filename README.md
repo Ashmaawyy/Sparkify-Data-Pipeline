@@ -20,11 +20,9 @@
 <br>
 
 - First you need airflow setup to build this project, to install airflow copy these commands in your terminal:
-<code>
-
-> AIRFLOW_VERSION=2.4.2
-> PYTHON_VERSION="$(python --version | cut -d " " -f 2 | cut -d "." -f 1-2)"
-> CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/> constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
-> pip install "apache-airflow[async,postgres,google]==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
-
-</code>
+<pre><code>
+ AIRFLOW_VERSION=2.4.2
+PYTHON_VERSION="$(python --version | cut -d " " -f 2 | cut -d "." -f 1-2)"
+ CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/> constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+ pip install "apache-airflow[async,postgres,google]==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
+</code></pre>
