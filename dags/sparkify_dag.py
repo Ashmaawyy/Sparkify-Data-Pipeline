@@ -6,6 +6,7 @@ from plugins.operators.stage_redshift import StageToRedshiftOperator
 from plugins.operators.load_facts import LoadFactsOperator
 from plugins.operators.load_dimensions import LoadDimensionsOperator
 from plugins.operators.data_quality import DataQualityOperator
+from plugins.operators.creat_table import CreateTableOperator
 from plugins.helpers.sql_queries import SqlQueries
 
 default_args = {
@@ -26,6 +27,76 @@ dag = DAG('sparkify_dag',
         )
 
 start_operator = DummyOperator(task_id = 'Begin_execution',  dag = dag)
+
+create_staging_events_table = CreateTableOperator(
+    task_id = 'create_staging_events_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'staging_events',
+    create_sql = SqlQueries.staging_events_create_sql
+)
+
+create_staging_songs_table = CreateTableOperator(
+    task_id = 'create_staging_songs_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'songplays',
+    create_sql = SqlQueries.staging_songs_create_sql
+)
+
+create_songplays_fact_table = CreateTableOperator(
+    task_id = 'create_songplays_fact_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'songplays',
+    create_sql = SqlQueries.songplays_table_create_sql
+)
+
+create_songs_table = CreateTableOperator(
+    task_id = 'create_songs_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'songplays',
+    create_sql = SqlQueries.songs_table_create_sql
+)
+
+create_users_table = CreateTableOperator(
+    task_id = 'create_users_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'songplays',
+    create_sql = SqlQueries.users_table_create_sql
+)
+
+create_artists_table = CreateTableOperator(
+    task_id = 'create_artists_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'songplays',
+    create_sql = SqlQueries.artists_table_create_sql
+)
+
+create_time_table = CreateTableOperator(
+    task_id = 'create_time_table',
+    dag = dag,
+    redshift_conn_id = 'redshift',
+    aws_credentials_id = 'aws_credentials',
+    region = 'us-west-2',
+    table = 'songplays',
+    create_sql = SqlQueries.time_table_create_sql
+)
 
 stage_events_to_redshift = StageToRedshiftOperator(
     task_id = 'stage_events',
@@ -124,8 +195,28 @@ end_operator = DummyOperator(task_id = 'Stop_execution',  dag = dag)
 #
 
 # First stage in DAG
-start_operator >> stage_events_to_redshift
-start_operator >> stage_songs_to_redshift
+start_operator >> create_staging_events_table
+start_operator >> create_staging_songs_table
+start_operator >> create_songplays_fact_table
+start_operator >> create_songs_table
+start_operator >> create_artists_table
+start_operator >> create_users_table
+start_operator >> create_time_table
+
+create_staging_events_table >> stage_events_to_redshift
+create_staging_events_table >> stage_songs_to_redshift
+create_staging_songs_table >> stage_events_to_redshift
+create_staging_songs_table >> stage_songs_to_redshift
+create_songplays_fact_table >> stage_events_to_redshift
+create_songplays_fact_table >> stage_songs_to_redshift
+create_songs_table >> stage_events_to_redshift
+create_songs_table >> stage_songs_to_redshift
+create_artists_table >> stage_events_to_redshift
+create_artists_table >> stage_songs_to_redshift
+create_users_table >> stage_events_to_redshift
+create_users_table >> stage_songs_to_redshift
+create_time_table >> stage_events_to_redshift
+create_time_table >> stage_songs_to_redshift
 
 # Second Stage in DAG
 stage_events_to_redshift >> load_songplays_fact_table
