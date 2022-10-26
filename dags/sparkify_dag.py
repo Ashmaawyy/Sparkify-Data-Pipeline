@@ -204,19 +204,13 @@ start_operator >> create_users_table
 start_operator >> create_time_table
 
 create_staging_events_table >> stage_events_to_redshift
-create_staging_events_table >> stage_songs_to_redshift
-create_staging_songs_table >> stage_events_to_redshift
 create_staging_songs_table >> stage_songs_to_redshift
 create_songplays_fact_table >> stage_events_to_redshift
 create_songplays_fact_table >> stage_songs_to_redshift
-create_songs_table >> stage_events_to_redshift
 create_songs_table >> stage_songs_to_redshift
-create_artists_table >> stage_events_to_redshift
 create_artists_table >> stage_songs_to_redshift
 create_users_table >> stage_events_to_redshift
-create_users_table >> stage_songs_to_redshift
 create_time_table >> stage_events_to_redshift
-create_time_table >> stage_songs_to_redshift
 
 # Second Stage in DAG
 stage_events_to_redshift >> load_songplays_fact_table
