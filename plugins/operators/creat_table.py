@@ -20,7 +20,7 @@ class CreateTableOperator(BaseOperator):
         self.aws_credentials_id = aws_credentials_id
         self.region = region
         self.table = table
-        self.load_sql = create_sql
+        self.create_sql = create_sql
 
     def execute(self, context):
         redshift = PostgresHook(self.redshift_conn_id)
