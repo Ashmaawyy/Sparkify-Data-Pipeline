@@ -17,7 +17,7 @@ default_args = {
     'depends_on_past': False,
     'email_on_retry': False,
     'email_on_failure': False,
-    'catchup': True
+    'catchup': False
 }
 
 dag = DAG('sparkify_dag',
