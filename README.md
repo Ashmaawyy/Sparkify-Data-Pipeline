@@ -9,7 +9,8 @@
 
 <br>
 
-- First data is loaded into two staging tables (staged_events & staged_songs).
+- First tables are created.
+- Then data is loaded into two staging tables (staged_events & staged_songs).
 - Then data is loaded into one fact table and four dimention tables from these two staging tables.
 - Then a data quality check test is run on the data to see if there is null values in the userId field.
 
